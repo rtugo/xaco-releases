@@ -3,47 +3,65 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XACO — Photo organizer for your Mac</title>
-<meta name="description" content="A native Mac photo organizer for Lightroom refugees who just want to find, tag, and organize. On-device labels, text, and faces. Nothing leaves your machine.">
-
-<!-- Open Graph / Twitter -->
-<meta property="og:title" content="XACO — Photo organizer for your Mac">
-<meta property="og:description" content="A native Mac photo organizer for Lightroom refugees who just want to find, tag, and organize. On-device labels, text, and faces. Nothing leaves your machine.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://rtugo.github.io/xaco-releases/">
-<meta name="twitter:card" content="summary_large_image">
+<title>XACO — Modern photo manager for Mac</title>
+<meta name="description" content="A modern, efficient, non-destructive photo manager for Mac. Use it instead of Lightroom or Luminar Neo — or in between your subscriptions.">
+<link rel="icon" type="image/png" href="xaco-icon.png">
 
 <style>
   :root {
-    --bg: #fafaf8;
+    /* Surfaces */
+    --bg: #faf8f3;
     --bg-elev: #ffffff;
     --ink: #1a1a1a;
     --ink-soft: #5a5a5a;
     --ink-faint: #8a8a8a;
     --line: rgba(0,0,0,0.08);
-    --line-soft: rgba(0,0,0,0.04);
-    --accent: #4F896B;                       /* AppTheme pick (light) */
-    --accent-soft: rgba(79, 137, 107, 0.10);
-    --mark-back-stroke: #1A1816;             /* same as fill in light mode */
+    --line-soft: rgba(0,0,0,0.045);
+    --quiet: rgba(0,0,0,0.045);
+
+    /* Lightframe brand */
+    --indigo: #4F46E5;
+    --pink:   #EC4899;
+    --grad:        linear-gradient(135deg, #4F46E5, #EC4899);
+    --grad-90:     linear-gradient(90deg,  #4F46E5, #EC4899);
+    --grad-soft:   linear-gradient(135deg, rgba(79,70,229,0.10), rgba(236,72,153,0.10));
+    --indigo-soft: rgba(79, 70, 229, 0.10);
+
+    /* Photo color threads (for shortcut chips) */
+    --thread-r: #EE4738;
+    --thread-y: #F7C72E;
+    --thread-g: #5CBC6B;
+    --thread-b: #4593D8;
+    --thread-p: #B861C7;
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #161614;
-      --bg-elev: #1f1f1d;
-      --ink: #f0eee8;
-      --ink-soft: #a8a6a0;
-      --ink-faint: #6a6864;
+      --bg: #161520;
+      --bg-elev: #1f1d2a;
+      --ink: #f0eef5;
+      --ink-soft: #a8a6b3;
+      --ink-faint: #6a6877;
       --line: rgba(255,255,255,0.08);
       --line-soft: rgba(255,255,255,0.04);
-      --accent: #75C294;                     /* AppTheme pick (dark) */
-      --accent-soft: rgba(117, 194, 148, 0.14);
-      --mark-back-stroke: #ffffff;           /* white outline so back card reads in dark */
+      --quiet: rgba(255,255,255,0.045);
+
+      --indigo: #6366F1;
+      --pink:   #F472B6;
+      --grad:      linear-gradient(135deg, #6366F1, #F472B6);
+      --grad-90:   linear-gradient(90deg,  #6366F1, #F472B6);
+      --grad-soft: linear-gradient(135deg, rgba(99,102,241,0.14), rgba(244,114,182,0.14));
+      --indigo-soft: rgba(99, 102, 241, 0.14);
+
+      --thread-r: #FF6B5C;
+      --thread-y: #FFD952;
+      --thread-g: #80DB8E;
+      --thread-b: #75BCFA;
+      --thread-p: #DB8AEB;
     }
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -57,72 +75,89 @@
     text-rendering: optimizeLegibility;
   }
 
-  .wrap {
-    max-width: 880px;
-    margin: 0 auto;
-    padding: 0 32px;
-  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 32px; }
 
   /* ── NAV ───────────────────────────────────────── */
   nav {
-    padding: 28px 0;
+    padding: 24px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 14px;
   }
-  nav .brand {
+  .brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 600;
     letter-spacing: -0.01em;
     font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
   }
-  nav a {
+  .brand-lockup img {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  }
+  nav .links a {
     color: var(--ink-soft);
     text-decoration: none;
     margin-left: 24px;
     transition: color 0.15s;
   }
-  nav a:hover { color: var(--ink); }
+  nav .links a:hover { color: var(--ink); }
 
   /* ── HERO ──────────────────────────────────────── */
   header.hero {
-    padding: 80px 0 60px;
+    padding: 64px 0 56px;
     text-align: center;
     animation: fadeUp 0.7s ease-out;
   }
 
-  /* Brand mark — inline SVG, dark-mode aware via currentColor on back stroke. */
-  .mark {
-    width: 88px;
-    height: 64px;
+  .app-icon {
+    width: 96px;
+    height: 96px;
     margin: 0 auto 36px;
-    color: var(--mark-back-stroke);
+    border-radius: 22px;
+    display: block;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.4) inset,
+      0 12px 32px rgba(0,0,0,0.10),
+      0 2px 8px rgba(0,0,0,0.05);
   }
-  .mark svg { width: 100%; height: 100%; display: block; }
+  @media (prefers-color-scheme: dark) {
+    .app-icon {
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.06) inset,
+        0 12px 32px rgba(0,0,0,0.4),
+        0 2px 8px rgba(0,0,0,0.2);
+    }
+  }
 
   h1 {
-    font-size: clamp(40px, 6vw, 64px);
+    font-size: clamp(38px, 5.6vw, 60px);
     font-weight: 700;
     letter-spacing: -0.03em;
     line-height: 1.05;
-    margin-bottom: 20px;
+    margin-bottom: 22px;
+  }
+  /* Gradient accent on a single span in the headline */
+  .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
   }
 
   .tagline {
-    font-size: clamp(18px, 2.2vw, 22px);
+    font-size: clamp(17px, 2.1vw, 21px);
     color: var(--ink-soft);
-    max-width: 560px;
-    margin: 0 auto 16px;
+    max-width: 600px;
+    margin: 0 auto 40px;
     letter-spacing: -0.01em;
-    line-height: 1.4;
-  }
-
-  .pitch {
-    font-size: 15px;
-    color: var(--ink-faint);
-    max-width: 520px;
-    margin: 0 auto 44px;
-    font-style: italic;
+    line-height: 1.45;
   }
 
   /* ── CTA ───────────────────────────────────────── */
@@ -146,18 +181,20 @@
     text-decoration: none;
     border: 1px solid transparent;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.15s, background 0.15s;
+    transition: transform 0.1s, box-shadow 0.2s, filter 0.15s, background 0.15s;
     letter-spacing: -0.005em;
   }
 
+  /* Primary uses the gradient — the hero brand expression */
   .btn-primary {
-    background: var(--ink);
-    color: var(--bg);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    background: var(--grad);
+    color: white;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25), 0 1px 2px rgba(0,0,0,0.08);
   }
   .btn-primary:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    filter: brightness(1.05);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35), 0 2px 4px rgba(0,0,0,0.1);
   }
 
   .btn-secondary {
@@ -166,8 +203,11 @@
     border-color: var(--line);
   }
   .btn-secondary:hover {
-    background: var(--bg-elev);
+    background: var(--quiet);
     border-color: rgba(0,0,0,0.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.18); }
   }
 
   .meta {
@@ -178,35 +218,34 @@
   .meta strong { color: var(--ink-soft); font-weight: 500; }
   .meta .dot { margin: 0 8px; opacity: 0.4; }
 
-  /* ── SHOTS ─────────────────────────────────────── */
+  /* ── HERO SHOT ─────────────────────────────────── */
   .shot {
-    margin: 64px 0;
+    margin: 48px 0 32px;
     border-radius: 14px;
     overflow: hidden;
     background: var(--bg-elev);
     border: 1px solid var(--line);
     box-shadow:
       0 1px 2px rgba(0,0,0,0.04),
-      0 12px 40px rgba(0,0,0,0.06);
+      0 16px 48px rgba(79, 70, 229, 0.06);
+    position: relative;
   }
-  .shot.hero { margin: 80px 0 100px; }
-  .shot img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
+  .shot.hero { margin: 64px 0 32px; }
+  .shot img { display: block; width: 100%; height: auto; }
   .shot-caption {
     font-size: 13px;
     color: var(--ink-faint);
     text-align: center;
-    margin-top: 12px;
-    margin-bottom: 64px;
+    margin-bottom: 56px;
+    margin-top: -8px;
+    max-width: 60ch;
+    margin-left: auto;
+    margin-right: auto;
   }
-  .shot + .shot-caption { margin-top: -52px; padding-top: 12px; }
 
   /* ── SECTIONS ──────────────────────────────────── */
   section {
-    padding: 64px 0;
+    padding: 60px 0;
     border-top: 1px solid var(--line);
   }
 
@@ -231,67 +270,104 @@
     max-width: 64ch;
     margin-bottom: 14px;
   }
-
   p strong { color: var(--ink); font-weight: 500; }
+
+  /* ── POSITIONING CALLOUT ──────────────────────── */
+  .pull {
+    position: relative;
+    padding: 16px 0 16px 22px;
+    margin: 24px 0 0;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .pull::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--grad);
+  }
+  .pull em {
+    color: var(--ink-soft);
+    font-style: normal;
+    display: block;
+    font-size: 14px;
+    margin-top: 8px;
+  }
 
   /* ── FEATURES ──────────────────────────────────── */
   .features {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 32px 40px;
+    gap: 28px 40px;
     margin-top: 8px;
   }
-  .feat h3 {
-    margin-top: 0;
-    margin-bottom: 8px;
+  .feat {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
   }
-  .feat p {
+  .feat .ico {
+    flex-shrink: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--indigo-soft);
+    color: var(--indigo);
+    display: grid;
+    place-items: center;
+    margin-top: 2px;
+  }
+  .feat .body h3 {
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+  .feat .body p {
     font-size: 14px;
     color: var(--ink-soft);
     margin: 0;
   }
-
-  /* ── SHORTCUTS ─────────────────────────────────── */
-  .keys {
-    margin-top: 8px;
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 10px 24px;
-    font-size: 14px;
-  }
-  kbd {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 12px;
-    background: var(--bg-elev);
-    border: 1px solid var(--line);
-    border-radius: 5px;
-    padding: 2px 7px;
-    color: var(--ink);
-    letter-spacing: 0.02em;
-  }
-  .keys .desc { color: var(--ink-soft); }
 
   /* ── PRICING / ALPHA ───────────────────────────── */
   .panel {
     background: var(--bg-elev);
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 28px 32px;
-    margin-top: 8px;
+    padding: 24px 28px;
+    margin-top: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel.featured {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--bg-elev), var(--bg-elev)) padding-box,
+      var(--grad) border-box;
+    border: 1px solid transparent;
   }
   .panel p { margin-bottom: 12px; }
   .panel p:last-child { margin-bottom: 0; }
   .price-line {
     display: flex;
     align-items: baseline;
-    gap: 8px;
+    gap: 10px;
     margin-bottom: 6px;
+    flex-wrap: wrap;
   }
   .price {
-    font-size: 24px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
     color: var(--ink);
+  }
+  .price.gradient {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
   }
   .price-detail {
     font-size: 14px;
@@ -309,12 +385,13 @@
     .privacy-grid { grid-template-columns: 1fr; }
   }
   .privacy-grid p { font-size: 14px; }
+  .privacy-grid h3 { margin-top: 0; }
 
   /* ── FOOTER ────────────────────────────────────── */
   footer {
     padding: 60px 0 80px;
     border-top: 1px solid var(--line);
-    margin-top: 40px;
+    margin-top: 32px;
     font-size: 13px;
     color: var(--ink-faint);
     display: flex;
@@ -339,39 +416,6 @@
     * { animation: none !important; transition: none !important; }
     html { scroll-behavior: auto; }
   }
-
-  /* ── INLINE LINKS ─────────────────────────────── */
-  a.inline {
-    color: var(--ink);
-    text-decoration: underline;
-    text-decoration-color: var(--accent);
-    text-underline-offset: 3px;
-    transition: text-decoration-color 0.15s;
-  }
-  a.inline:hover { text-decoration-color: var(--accent); }
-
-  ul.plain {
-    list-style: none;
-    padding: 0;
-    margin: 8px 0 14px;
-    color: var(--ink-soft);
-  }
-  ul.plain li {
-    padding: 6px 0;
-    padding-left: 20px;
-    position: relative;
-    font-size: 15px;
-  }
-  ul.plain li::before {
-    content: "";
-    position: absolute;
-    left: 4px;
-    top: 14px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--accent);
-  }
 </style>
 </head>
 
@@ -380,34 +424,26 @@
 <div class="wrap">
 
   <nav>
-    <div class="brand">XACO</div>
-    <div>
-      <a href="#tour">Tour</a>
-      <a href="#privacy">Privacy</a>
+    <a href="#" class="brand-lockup">
+      <img src="xaco-icon.png" alt="XACO" />
+      <span>XACO</span>
+    </a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#privacy">Your data</a>
       <a href="#alpha">Alpha</a>
       <a href="https://github.com/rtugo/xaco-releases">GitHub</a>
     </div>
   </nav>
 
   <header class="hero">
-    <div class="mark" aria-label="XACO mark">
-      <svg viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" role="img">
-        <!-- BACK card: dark fill, stroke uses currentColor so dark mode swaps to white outline -->
-        <rect x="80" y="180" width="480" height="320" rx="22" ry="22"
-              fill="#1A1816" stroke="currentColor" stroke-width="10"/>
-        <!-- FRONT card: white with dark border, rotated 25° about pivot (560, 500) -->
-        <rect x="80" y="180" width="480" height="320" rx="22" ry="22"
-              fill="#FFFFFF" stroke="#1A1816" stroke-width="22"
-              transform="rotate(25 560 500)"/>
-      </svg>
-    </div>
-    <h1>Photo organizer<br>for your Mac.</h1>
-    <p class="tagline">For Lightroom refugees who just want to find, tag, and organize their photos.</p>
-    <p class="pitch">Fast. Keyboard-driven. Non-destructive. 90% of what you need, without the subscription.</p>
+    <img src="xaco-icon.png" alt="XACO" class="app-icon" />
+    <h1>A <span class="grad-text">modern photo manager</span><br>for your Mac.</h1>
+    <p class="tagline">For mobile and SLR shooters with a growing pile of photos. Select, sort, and organize them — fast, on-device, non-destructive.</p>
 
     <div class="cta-row">
       <a href="https://github.com/rtugo/xaco-releases/releases/latest" class="btn btn-primary">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9m0 0L3 6m4 4l4-4M2 13h10"/></svg>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9m0 0L3 6m4 4l4-4M2 13h10"/></svg>
         Download alpha
       </a>
       <a href="https://github.com/rtugo/xaco-releases/issues/new" class="btn btn-secondary">
@@ -418,7 +454,7 @@
     <p class="meta">
       <strong>t.07.3.1</strong>
       <span class="dot">·</span>
-      macOS 14+, Apple Silicon recommended
+      macOS 13+, Apple Silicon
       <span class="dot">·</span>
       Free until Jun 30, 2026
     </p>
@@ -433,104 +469,123 @@
     </picture>
   </figure>
 
-  <!-- ── WHAT IT DOES ───────────────────────────── -->
-  <section id="what">
-    <h2>What XACO does</h2>
-    <p>XACO opens any folder of JPEGs on your Mac and helps you organize them. As you browse, an on-device AI pass quietly analyzes each photo — recognizing scenes, reading text, finding faces.</p>
-    <p>Filter by smart category. Click any AI tag to narrow the grid. Dial the similarity slider to pull related photos together. Everything runs on your machine. Nothing leaves your Mac.</p>
+  <!-- ── POSITIONING ────────────────────────────── -->
+  <section id="why">
+    <h2>Lightroom-class workflow, without the lock-in</h2>
+    <p>XACO works with your photos where they already are. It doesn't move them, doesn't delete them, doesn't import them into a proprietary catalog. Open a folder, start working — your files stay yours.</p>
+
+    <div class="pull">
+      Use XACO instead of Lightroom or Luminar Neo — it gives you 90% of what you need 90% of the time, with no recurring subscription.
+      <em>Or use it in between subscriptions, when you only need the powerhouse tools occasionally.</em>
+    </div>
   </section>
 
-  <!-- ── TOUR ───────────────────────────────────── -->
-  <section id="tour">
-    <h2>Tour</h2>
+  <!-- ── FEATURES ───────────────────────────────── -->
+  <section id="features">
+    <h2>What's inside</h2>
     <div class="features">
+
       <div class="feat">
-        <h3>Smart sidebar</h3>
-        <p>Tristate include / exclude filters for People, Text, Documents, Animals, Outdoors. Combine freely.</p>
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 1l8 6-8 6V1z"/></svg></div>
+        <div class="body">
+          <h3>Fast</h3>
+          <p>Native Apple Silicon. Folders open immediately. Browsing stays smooth as your library grows.</p>
+        </div>
       </div>
+
       <div class="feat">
-        <h3>AI tags strip</h3>
-        <p>Top vision labels for the focused photo. Click any tag to filter the grid. Sticks until you clear it.</p>
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="12" height="8" rx="1"/><path d="M3.5 6h.5M5.5 6h.5M7.5 6h.5M3.5 8.5h7"/></svg></div>
+        <div class="body">
+          <h3>Keyboard-driven</h3>
+          <p>Rate with 0–5. Color-thread with R/Y/G/B/P. Navigate, search, mark visibility — all without touching the mouse.</p>
+        </div>
       </div>
+
       <div class="feat">
-        <h3>Similarity stepper</h3>
-        <p>Six thresholds from 95% to 60%. Click to find visually similar photos. Stricter on the left, looser on the right.</p>
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="3"/><path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.8 2.8l1 1M10.2 10.2l1 1M2.8 11.2l1-1M10.2 3.8l1-1"/></svg></div>
+        <div class="body">
+          <h3>On-device AI</h3>
+          <p>Auto-classifies your photos by what's in them. Find faces, scenes, documents, animals — everything runs locally.</p>
+        </div>
       </div>
+
       <div class="feat">
-        <h3>Search</h3>
-        <p>⌘F searches filenames, AI tags, and any text the AI found inside photos (OCR).</p>
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="5" r="3"/><path d="M9 9l3.5 3.5"/></svg></div>
+        <div class="body">
+          <h3>Find similar</h3>
+          <p>Pick a photo and pull up visually related ones at six similarity thresholds. Great for de-duping and curating.</p>
+        </div>
       </div>
+
       <div class="feat">
-        <h3>Inspector</h3>
-        <p>Right-side panel: file info, AI tags, OCR text, faces, plus rating, color threads, visibility, location.</p>
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5l3-1 4 2 3-1v7l-3 1-4-2-3 1V5z"/><circle cx="9.5" cy="3.5" r="1.5"/></svg></div>
+        <div class="body">
+          <h3>Apple Maps</h3>
+          <p>Geo-tagged photos plot to Apple Maps. Browse by place, fix missing or wrong locations, find that trip from last summer.</p>
+        </div>
       </div>
+
       <div class="feat">
-        <h3>Non-destructive</h3>
-        <p>XACO never touches your originals. All edits and metadata live in plain JSON sidecars next to each photo.</p>
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l4-8 3 6 1-2 2 4H2z"/></svg></div>
+        <div class="body">
+          <h3>Auto-tagging</h3>
+          <p>Vision labels and OCR'd text become searchable tags automatically. Type a word, find every photo it appears in.</p>
+        </div>
       </div>
+
+      <div class="feat">
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7l3-3 3 3 4-4"/><path d="M9 3h3v3"/></svg></div>
+        <div class="body">
+          <h3>Non-destructive editing</h3>
+          <p>Tone, crop, straighten, color — all stored separately from your originals. Versions tracked. Revert any time.</p>
+        </div>
+      </div>
+
+      <div class="feat">
+        <div class="ico"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="10" height="10" rx="1"/><path d="M5 5h4M5 7h4M5 9h2"/></svg></div>
+        <div class="body">
+          <h3>Inspectable sidecars</h3>
+          <p>Edits and metadata live in plain JSON files next to each photo. Move the photo, the work moves with it.</p>
+        </div>
+      </div>
+
     </div>
 
-    <figure class="shot" style="margin-top: 48px;">
+    <figure class="shot" style="margin-top: 56px;">
       <img src="screenshots/preview-inspector-dark.jpg"
-           alt="XACO preview pane — full-size photo with the inspector panel open showing AI tags, tone sliders, crop, and location"
+           alt="XACO preview pane with the inspector panel — AI tags, tone sliders, crop controls, and location"
            loading="lazy">
     </figure>
     <p class="shot-caption">Preview pane with the inspector — adjust tone, crop non-destructively, edit location.</p>
 
     <figure class="shot">
       <img src="screenshots/map-thumbnails-light.jpg"
-           alt="XACO map view — photos plotted as thumbnails on a muted Barcelona map"
+           alt="XACO map view — photos plotted as thumbnails on a muted city map"
            loading="lazy">
     </figure>
-    <p class="shot-caption">Map view — every photo with GPS plotted as a thumbnail. Click any pin to peek the photo.</p>
-  </section>
-
-  <!-- ── INSTALL ────────────────────────────────── -->
-  <section id="install">
-    <h2>Install</h2>
-    <ul class="plain">
-      <li>Download <strong>XACO-Alpha-&lt;version&gt;.dmg</strong> from the <a class="inline" href="https://github.com/rtugo/xaco-releases/releases/latest">Releases page</a>.</li>
-      <li>Open the DMG, drag XACO into Applications.</li>
-      <li>Eject the DMG and launch XACO.</li>
-    </ul>
-    <p>Signed and notarized by Apple, so first launch is smooth. If macOS prompts about a downloaded app, click Open.</p>
-  </section>
-
-  <!-- ── KEYBOARD ───────────────────────────────── -->
-  <section id="keys">
-    <h2>Keyboard shortcuts</h2>
-    <div class="keys">
-      <kbd>Space</kbd>          <span class="desc">Toggle preview pane</span>
-      <kbd>F</kbd>               <span class="desc">Toggle fullscreen preview</span>
-      <kbd>← → ↑ ↓</kbd>          <span class="desc">Navigate the grid</span>
-      <kbd>⌘ F</kbd>              <span class="desc">Focus search</span>
-      <kbd>Esc</kbd>              <span class="desc">Defocus search / close preview</span>
-      <kbd>0 – 5</kbd>            <span class="desc">Set rating</span>
-      <kbd>R Y G B P</kbd>        <span class="desc">Toggle color thread</span>
-      <kbd>V S U</kbd>            <span class="desc">Set visibility (Vault / Share / pUblic)</span>
-    </div>
+    <p class="shot-caption">Map view — every geo-tagged photo plotted as a thumbnail. Click any pin to peek the photo.</p>
   </section>
 
   <!-- ── PRIVACY ────────────────────────────────── -->
   <section id="privacy">
-    <h2>Privacy &amp; your data</h2>
-    <p>XACO processes your photos entirely on your Mac. Nothing is collected, transmitted, or shared — about your photos, your usage, your Mac, or you. The app reads only the folders you explicitly open.</p>
+    <h2>Simple. Transparent. Yours.</h2>
+    <p>XACO is committed to simplicity, transparency, and efficiency. Nothing is collected, transmitted, or shared — about your photos, your usage, your Mac, or you. The app reads only the folders you explicitly open.</p>
 
     <div class="privacy-grid">
       <div>
-        <h3>Your decisions are yours</h3>
-        <p>Every deliberate thing you do to a photo — ratings, color threads, visibility, tone and crop adjustments, corrected dates, fixed locations — is written as a plain JSON sidecar file next to the photo. Fully inspectable. Readable in any text editor. Move the photo, the sidecar travels with it.</p>
+        <h3>Your decisions, in plain JSON</h3>
+        <p>Ratings, color threads, visibility, tone and crop edits, image versions, corrected dates and locations — all written as readable JSON sidecars next to each photo. Inspect them in any text editor. Move the photo, the sidecar travels with it.</p>
       </div>
       <div>
         <h3>No proprietary catalog</h3>
-        <p>AI-derived data (labels, OCR, face detections) lives in a local cache for speed — and can always be regenerated from your photos. Stop using XACO and your work goes with you. Nothing is locked in.</p>
+        <p>AI-derived data (labels, OCR, faces) lives in a local cache for speed and can always be regenerated. Stop using XACO and your work goes with you. Nothing is locked in.</p>
       </div>
     </div>
   </section>
 
   <!-- ── ALPHA / PRICING ────────────────────────── -->
   <section id="alpha">
-    <h2>Pre-release alpha</h2>
+    <h2>Alpha is free. v1 will be a one-time purchase.</h2>
     <p>XACO is being built in the open. Your feedback shapes what ships.</p>
 
     <div class="panel">
@@ -538,28 +593,32 @@
         <span class="price">Free</span>
         <span class="price-detail">until Jun 30, 2026 — newer builds will arrive before then</span>
       </div>
-      <p>Alphas and betas keep coming free until v1 is ready. No fixed date — v1 ships when it's ready.</p>
+      <p>Alphas and betas keep coming free until v1 is ready. v1 ships when it's ready, not on a fixed date.</p>
     </div>
 
-    <h3>What v1 will look like</h3>
-    <div class="panel">
+    <div class="panel featured">
       <div class="price-line">
-        <span class="price">Under $49</span>
+        <span class="price gradient">At or under $59</span>
         <span class="price-detail">one-time purchase · no subscription</span>
       </div>
-      <p>Includes one year of updates and support. Buy it once, own it.</p>
+      <p>What v1 will look like: buy once, own it. Includes one year of updates and support.</p>
     </div>
 
-    <p style="margin-top: 24px;">Your photos and any sidecar metadata XACO writes are never affected when an alpha expires.</p>
+    <p style="margin-top: 24px; font-size: 14px;">Your photos and sidecar metadata are never affected when an alpha expires.</p>
   </section>
 
-  <!-- ── FEEDBACK ───────────────────────────────── -->
-  <section id="feedback">
-    <h2>Feedback</h2>
-    <p>Found a bug? Have a suggestion? Open an issue on GitHub — describe what happened, attach a screenshot if helpful. A free GitHub account is required.</p>
+  <!-- ── INSTALL + FEEDBACK ─────────────────────── -->
+  <section id="install">
+    <h2>Install</h2>
+    <p>Download <strong>XACO-Alpha-&lt;version&gt;.dmg</strong>, drag XACO into Applications, eject the DMG, and launch. Signed and notarized by Apple.</p>
+
     <div class="cta-row" style="justify-content: flex-start; margin-top: 8px;">
+      <a href="https://github.com/rtugo/xaco-releases/releases/latest" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 1v9m0 0L3 6m4 4l4-4M2 13h10"/></svg>
+        Get the latest DMG
+      </a>
       <a href="https://github.com/rtugo/xaco-releases/issues/new" class="btn btn-secondary">
-        Open an issue →
+        Open an issue
       </a>
     </div>
   </section>
