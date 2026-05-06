@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>XACO — Modern photo manager for Mac</title>
 <meta name="description" content="A modern, efficient, non-destructive photo manager for Mac. Use it instead of Lightroom or Luminar Neo — or in between your subscriptions.">
-<link rel="icon" type="image/png" href="xaco-icon.png">
+<link rel="icon" type="image/svg+xml" href="xaco-mark.svg">
 
 <style>
   :root {
@@ -96,9 +96,8 @@
     text-decoration: none;
   }
   .brand-lockup img {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
+    width: 32px;
+    height: auto;
   }
   nav .links a {
     color: var(--ink-soft);
@@ -115,24 +114,13 @@
     animation: fadeUp 0.7s ease-out;
   }
 
+  /* Bare brand mark — same SVG used inside the product. No rounded
+     square, no app-icon shadow; the mark stands on its own. */
   .app-icon {
-    width: 96px;
-    height: 96px;
+    width: 132px;
+    height: auto;
     margin: 0 auto 36px;
-    border-radius: 22px;
     display: block;
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.4) inset,
-      0 12px 32px rgba(0,0,0,0.10),
-      0 2px 8px rgba(0,0,0,0.05);
-  }
-  @media (prefers-color-scheme: dark) {
-    .app-icon {
-      box-shadow:
-        0 1px 0 rgba(255,255,255,0.06) inset,
-        0 12px 32px rgba(0,0,0,0.4),
-        0 2px 8px rgba(0,0,0,0.2);
-    }
   }
 
   h1 {
@@ -213,7 +201,8 @@
   .meta {
     font-size: 13px;
     color: var(--ink-faint);
-    margin-top: 18px;
+    margin: 18px auto 0;
+    text-align: center;
   }
   .meta strong { color: var(--ink-soft); font-weight: 500; }
   .meta .dot { margin: 0 8px; opacity: 0.4; }
@@ -426,8 +415,8 @@
   <nav>
     <a href="#" class="brand-lockup">
       <picture>
-        <source srcset="xaco-icon-dark.png" media="(prefers-color-scheme: dark)">
-        <img src="xaco-icon.png" alt="XACO" />
+        <source srcset="xaco-mark-dark.svg" media="(prefers-color-scheme: dark)">
+        <img src="xaco-mark.svg" alt="XACO" />
       </picture>
       <span>XACO</span>
     </a>
@@ -441,8 +430,8 @@
 
   <header class="hero">
     <picture>
-      <source srcset="xaco-icon-dark.png" media="(prefers-color-scheme: dark)">
-      <img src="xaco-icon.png" alt="XACO" class="app-icon" />
+      <source srcset="xaco-mark-dark.svg" media="(prefers-color-scheme: dark)">
+      <img src="xaco-mark.svg" alt="XACO" class="app-icon" />
     </picture>
     <h1>A <span class="grad-text">modern photo manager</span><br>for your Mac.</h1>
     <p class="tagline">For mobile and SLR shooters with a growing pile of photos. Select, sort, and organize them — fast, on-device, non-destructive.</p>
@@ -630,7 +619,7 @@
   </section>
 
   <footer>
-    <div>© 2026 thereugo</div>
+    <div>© 2026 Lingoberry AI</div>
     <div>
       <a href="https://github.com/rtugo/xaco-releases">GitHub</a>
       <a href="https://github.com/rtugo/xaco-releases/releases">Releases</a>

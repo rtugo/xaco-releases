@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  XACO inline brand mark — two cards only, no container.
+  ViewBox tightened to the cards' bounding box (with stroke padding).
+  Stack: black flat → white rotated card on top.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" width="720" height="520">
+  <!-- BACK : black flat upright. Bottom-right at pivot (560, 500). -->
+  <rect x="80" y="180" width="480" height="320" rx="22" ry="22"
+        fill="#1A1816" stroke="#1A1816" stroke-width="10"/>
+
+  <!-- FRONT : white card with thick black border, rotated 25° CW about pivot (560, 500) -->
+  <rect x="80" y="180" width="480" height="320" rx="22" ry="22"
+        fill="#FFFFFF" stroke="#1A1816" stroke-width="22"
+        transform="rotate(25 560 500)"/>
+</svg>
