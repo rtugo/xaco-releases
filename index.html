@@ -425,7 +425,10 @@
 
   <nav>
     <a href="#" class="brand-lockup">
-      <img src="xaco-icon.png" alt="XACO" />
+      <picture>
+        <source srcset="xaco-icon-dark.png" media="(prefers-color-scheme: dark)">
+        <img src="xaco-icon.png" alt="XACO" />
+      </picture>
       <span>XACO</span>
     </a>
     <div class="links">
@@ -437,7 +440,10 @@
   </nav>
 
   <header class="hero">
-    <img src="xaco-icon.png" alt="XACO" class="app-icon" />
+    <picture>
+      <source srcset="xaco-icon-dark.png" media="(prefers-color-scheme: dark)">
+      <img src="xaco-icon.png" alt="XACO" class="app-icon" />
+    </picture>
     <h1>A <span class="grad-text">modern photo manager</span><br>for your Mac.</h1>
     <p class="tagline">For mobile and SLR shooters with a growing pile of photos. Select, sort, and organize them — fast, on-device, non-destructive.</p>
 
